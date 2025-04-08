@@ -165,8 +165,8 @@ This class uses a file called `config.properties` to find the data files it need
 
 ```properties
 # config.properties (in src/main/resources)
-complaints.csv=/complaints_sample_1_30.csv
-embeddings.jsonl=/embeddings_mistral_1_30.jsonl
+complaints.csv=/complaints_test_1_30.csv
+embeddings.jsonl=/embeddings_test_1_30.jsonl
 ```
 
 You don’t need to modify this unless you want to point to a different dataset.
@@ -250,6 +250,98 @@ Your task is to:
 There are no shortcuts here: the application **will not run correctly until you’ve implemented all the necessary logic.** But once you do, you’ll be able to see your work in action via both the command-line app and the web interface.  And do not forget, you need to add the dependencies!
 
 ---
+
+
+## 🔨 Building the Project with Maven
+
+Once you’ve filled in the missing pieces and added the necessary dependencies, it’s time to build your project and verify that everything compiles.
+
+There are **two ways to build** the project, depending on whether you’re using your own local Maven installation or the wrapper script included with the project.
+
+---
+
+### 🧰 Option 1: Using the Maven Wrapper (`./mvnw`)
+
+The Maven Wrapper (`mvnw`) allows you to run Maven even if you don't have it installed globally. It uses a specific Maven version defined in the project and automatically downloads it the first time you use it.
+
+To build the project using the wrapper and **your local `.m2` cache**, run:
+
+```bash
+./mvnw clean install -Dmaven.repo.local=.m2repo
+```
+
+✅ This will:
+- Clean the previous build
+- Compile your code
+- Run all tests
+- Use your existing local Maven cache (avoids re-downloading dependencies)
+
+---
+
+### 💡 Windows Users:
+Use the batch file version:
+
+```bash
+mvnw.cmd clean install -Dmaven.repo.local=%USERPROFILE%\.m2\repository
+```
+
+---
+
+### 🧰 Option 2: Using a Locally Installed Maven (`mvn`)
+
+If you already have Maven installed on your machine, you can use it directly:
+
+```bash
+mvn clean install
+```
+
+This does the same thing as the wrapper, but uses your system's Maven version.
+
+---
+
+### 📦 What This Does
+
+Both commands will:
+
+- Remove previously compiled files
+- Compile all Java code
+- Run the provided unit tests
+- Package the app into a `.jar` file inside the `target/` directory
+
+---
+
+### 📁 After the Build
+
+You should see a new file like this in your `target/` folder:
+
+```
+target/complaints-1.0-SNAPSHOT.jar
+```
+
+This means your app built successfully!
+
+---
+
+### 🧠 Reminder: The Application Won’t Run Until You Finish the Logic
+
+Your task is to:
+
+- Read the code carefully
+- Understand how the pieces fit together
+- Fill in the blanks — one method at a time
+
+There are no shortcuts here: the application **will not run correctly** until you’ve implemented all the necessary logic.
+
+But once you do, you’ll be able to see your work in action via:
+
+- ✅ The command-line explorer
+- ✅ The full Spring Boot web interface
+- ✅ A working, testable web app
+
+And don’t forget — make sure your dependencies are declared in the `pom.xml` file, and that your `config.properties` is set up correctly.
+
+---
+
 ## 🌐 Running the Web App
 
 Once you’ve implemented the core functionality of the project (loading complaints, calculating similarity, etc.), you can view your work through a fully functional **Spring Boot web application**.
@@ -396,6 +488,7 @@ This will let the user know when something has gone wrong — and help prevent c
 
 ---
 
+
 ### 📌 Reminder: Maximum Number of Complaints
 
 The dataset you are working with contains **2,500 complaints**, and they are indexed from `0` to `2499`.
@@ -407,9 +500,75 @@ If a user tries to jump to `2500` or higher, your app should:
 
 ---
 
-Let’s wrap this up in style! 🎉 Here's your final section — clear, professional, and encourages good version control hygiene. It emphasizes the importance of using Git and GitHub as part of the learning experience.
+### Task 4:  Implement a Search Company Page
+
+Let’s add one final feature to your project: **a search page that filters complaints by company name**.
+
+This will give your users the ability to explore complaints beyond just the index-based viewer, and it gives you a chance to practice request handling, filtering logic, and passing data to a new view.
 
 ---
+
+### ✅ What You'll Build
+
+You're going to create a new `/search` endpoint that:
+
+- Accepts a query parameter like `?company=Fidelity`
+- Filters the complaints by matching company names (case-insensitive)
+- Passes matching complaints to a **search results page**
+- Displays a helpful message if no results are found
+
+We've already provided you with a basic HTML page at:
+
+📄 `src/main/resources/templates/search.html`
+
+Your job is to **make the backend work** to power that page.
+
+---
+
+### 🧠 How It Should Work
+
+So when a user enters something like:
+
+```
+http://localhost:8080/search?company=Fidelity
+```
+
+Your controller should find and return all complaints where the company field contains the text "Fidelity" (case-insensitive), such as:
+
+```java
+complaint.getCompany().toLowerCase().contains("fidelity")
+```
+
+---
+
+### 🛠️ What You Need to Do
+
+1. Create a new method in your `ComplaintController` class that maps to `/search`.
+2. Read the `company` query parameter from the request.
+3. Filter the `complaints` list using `stream()` or a loop.
+4. Add the filtered results and any relevant messages to the `Model`.
+5. Return the `"search"` view to display the results.
+
+---
+
+### 🧪 Don't Forget to Handle Edge Cases
+
+- No search term provided? Show an error like `"Please enter a company name."`
+- No matches found? Show `"No complaints found for that company."`
+- Match should be **case-insensitive** and work with partial names
+
+---
+
+### ✅ Example Behavior
+
+| URL | Behavior |
+|-----|----------|
+| `/search?company=Wells` | Returns all complaints involving companies with “Wells” in the name |
+| `/search?company=` | Shows error: “Please enter a company name.” |
+| `/search?company=XYZDoesNotExist` | Shows message: “No complaints found for that company.” |
+
+---
+
 ## 🗂️ Final Deliverable: A Clean GitHub Repository
 
 Your last task is to prepare a clean, organized, and professional-looking GitHub repository containing your completed project.
@@ -456,7 +615,7 @@ target/
 
 When you're done, submit your **GitHub repo URL** to the D2L dropbox.
 
-## 🧮 Project Scoring Rubric
+## ✅ Project Scoring Rubric
 
 | Category | Description | Points |
 |----------|-------------|--------|
@@ -464,12 +623,11 @@ When you're done, submit your **GitHub repo URL** to the D2L dropbox.
 | **2. Similarity Service** | `ComplaintSimilarityService` correctly computes cosine similarity and returns the top 3 most similar complaints (unit test passes). | **15** |
 | **3. Unit Tests** | All provided unit tests are passing. Partial credit may be awarded if most but not all are working. | **10** |
 | **4. Command-Line Explorer** | CLI app (`ComplaintCommandLineExplorer`) runs without crashing and displays complaint data and similarity matches as expected. | **10** |
-| **5. Web App Functionality** | Spring Boot app starts up, loads complaint data, and displays it correctly at `http://localhost:8080/complaint`. | **10** |
-| **6. Web UI Enhancements** | All required fields are added to the `complaint.html` page: product, issue, company, etc. (as listed in instructions). | **10** |
-| **7. “Jump-To” Functionality** | A form allows jumping to a specific complaint by index. Handles invalid input gracefully and displays errors on the page. | **10** |
-| **8. Code Quality** | Code is clean, readable, and follows consistent formatting. Meaningful variable names, no commented-out solution code left in. | **5** |
-| **9. GitHub Repository** | Repo is organized, with a clear commit history, a working `.gitignore`, and only necessary files checked in. | **10** |
-| **10. Overall Completeness & Professionalism** | App functions end-to-end and shows thoughtful effort and attention to detail. | **5** |
+| **5. Web App Base Functionality** | Spring Boot app starts up, loads complaint data, and displays it correctly at `/complaint`. | **10** |
+| **6. Web UI Enhancements** | All required fields (product, issue, narrative, etc.) are added to the `complaint.html` page. | **10** |
+| **7. “Jump-To” Functionality** | A working form allows navigation to a specific complaint index. Handles invalid inputs with helpful messages. | **10** |
+| **8. Search by Company Feature** | Implements `/search` endpoint, filters by company name, and displays results using `search.html`. Handles no-input and no-match cases. | **10** |
+| **9. Code Quality** | Code is clean, readable, and well-structured. Good naming, minimal duplication, and consistent formatting. | **5** |
+| **10. GitHub Repository** | Project is committed to GitHub with a clean history, valid `.gitignore`, and no junk files. Proper structure and documentation included. | **5** |
 
 **💯 Total Points: 100**
-
