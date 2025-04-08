@@ -353,7 +353,7 @@ Once you’ve implemented the core functionality of the project (loading complai
 Make sure you're in the root directory of the project (where `pom.xml` lives), and then run:
 
 ```bash
-mvn spring-boot:run
+./mvnw spring-boot:run
 ```
 
 This will:
