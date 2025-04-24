@@ -51,7 +51,6 @@ public class EmbeddingLoader {
             s = "{ \"id\": " + s;
         //     // JsonNode json = mapper.readTree(jsonString);
         //     // System.out.println(json.get("id"));
-            
 
             JSONObject obj = new JSONObject(s);
             long id = obj.getLong("id");
